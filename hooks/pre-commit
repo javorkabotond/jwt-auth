@@ -1,0 +1,39 @@
+#!/bin/bash
+
+function get_module() {
+  local path=$1
+  while true; do
+    path=$(dirname $path)
+    if [ -f "$path/pom.xml" ]; then
+      echo "$path"
+      return
+    # shellcheck disable=SC2076
+    elif [[ "./" =~ "$path" ]]; then
+      return
+    fi
+  done
+}
+modules=()
+
+for file in $(git status | grep -E ".java" ); do
+  module=$(get_module "$file")
+  if [ "" != "$module" ] && [[ ! " ${modules[@]} " =~ " $module " ]]; then
+    modules+=("$module")
+  fi
+done
+
+if [ ${#modules[@]} -eq 0 ]; then
+  echo "No modified files"
+  exit
+fi
+
+modules_arg=${modules[@]}
+
+for service in $modules_arg; do
+  result=$(find $service -name "pom.xml" -exec mvn validate -f '{}' \; | grep "ERROR")
+  if [ "" != "$result" ]; then
+    echo "Checkstyle build failed. Service: $service"
+    printf "$result"
+    exit 1
+  fi
+done
