@@ -100,10 +100,10 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>../.git/hooks</outputDirectory>
+                            <outputDirectory>./.git/hooks</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>../hooks</directory>
+                                    <directory>./hooks</directory>
                                 </resource>
                             </resources>
                         </configuration>
