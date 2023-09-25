@@ -4,6 +4,7 @@ function get_module() {
   local path=$1
   while true; do
     path=$(dirname $path)
+    # shellcheck disable=SC1009
     if [ -f "$path/pom.xml" ]; then
       echo "$path"
       return
